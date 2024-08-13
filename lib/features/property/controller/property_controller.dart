@@ -45,6 +45,7 @@ class PropertyController extends AutoDisposeAsyncNotifier <List<PropertyModel>> 
   PropertyRepository get _repo => ref.read(propertyRepositoryProvider);
   @override
   FutureOr<List<PropertyModel>> build() async {
+    log("asyncPropertyProvider is created");
    return await _repo.getAll();
   }
   Future<void> bookProperty(PropertyModel model,DateTime start,DateTime end,VoidCallback onDone) async {

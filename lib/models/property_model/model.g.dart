@@ -6,8 +6,9 @@ part of 'model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PropertyModel _$PropertyModelFromJson(Map<String, dynamic> json) =>
-    PropertyModel(
+PropertyModel _$PropertyModelFromJson(Map<String, dynamic> json) {
+  try{
+    return  PropertyModel(
       address: json['address'] as String,
       availabilityStatus: json['availability_status'] as bool,
       city: $enumDecode(_$CityEnumMap, json['city']),
@@ -17,7 +18,7 @@ PropertyModel _$PropertyModelFromJson(Map<String, dynamic> json) =>
           : Expand.fromJson(json['expand'] as Map<String, dynamic>),
       id: json['id'] as String,
       images:
-          (json['images'] as List<dynamic>).map((e) => e as String).toList(),
+      (json['images'] as List<dynamic>).map((e) => e as String).toList(),
       numberOfBathrooms: (json['number_of_bathrooms'] as num).toInt(),
       numberOfRooms: (json['number_of_rooms'] as num).toInt(),
       owner: json['owner'] as String,
@@ -26,7 +27,22 @@ PropertyModel _$PropertyModelFromJson(Map<String, dynamic> json) =>
       size: (json['size'] as num).toInt(),
       hasWifi: json['has_wifi'] as bool,
     );
+  }
+  catch(e){
+    log(" errorr  in parsing ${e.toString()}");
+    return PropertyModel(address: "none",
+        availabilityStatus: false, city: City.damascus , description: "nono", id: "id",
+        images: ["http://picssum.io/300"],
+        numberOfBathrooms:0,
+        numberOfRooms: 0,
+        owner:"s",
+        priceDaily:0,
+        priceMonthly:0,
+        size: 0,
+        hasWifi: false);
+  }
 
+}
 Map<String, dynamic> _$PropertyModelToJson(PropertyModel instance) =>
     <String, dynamic>{
       'address': instance.address,

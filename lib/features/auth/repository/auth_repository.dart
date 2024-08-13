@@ -23,6 +23,7 @@ final authRepositoryProvider = Provider((ref)  {
 class PocketBaseAuthImplementation implements AuthRepository {
   final PocketBase _pb;
 
+
   PocketBaseAuthImplementation({
     required PocketBase pb
   }):_pb=pb;
@@ -49,6 +50,8 @@ class PocketBaseAuthImplementation implements AuthRepository {
   @override
   Future<void>  logout() async {
        _pb.authStore.clear();
+
+
   }
 
   @override

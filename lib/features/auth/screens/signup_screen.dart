@@ -126,7 +126,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         "password": password.text,
         "passwordConfirm": passwordConfirm.text,
         "name": name.text,
-        "gender": gender,
+        "gender": gender == "Male" ?"male" : "female",
       };
       ref
           .read(authControllerProvider.notifier)

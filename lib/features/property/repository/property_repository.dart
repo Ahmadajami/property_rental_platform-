@@ -17,6 +17,7 @@ import 'package:http/http.dart' as http;
 final propertyRepositoryProvider = Provider<PropertyRepository>((ref) {
   final pb = ref.read(pocketBaseProvider);
   final userModel = ref.read(authControllerProvider.notifier).userModel!;
+  log("propertyRepositoryProvider is created");
   return PropertyRepository(pb: pb, userModel: userModel);
 });
 
@@ -43,12 +44,12 @@ class PropertyRepository {
               perPage: paging.perPage,
               sort: paging.sort);
 
-      return results.items.map((property) {
 
+      return results.items.map((property) {
         return PropertyModel.fromRecord(property);
       }).toList();
     } catch (error) {
-      log("_fetchData is been Called adn has an erorr");
+      log("_fetchData is been Called  has and there is  erorr");
       log(error.toString());
       rethrow;
     }
@@ -117,6 +118,7 @@ class PropertyRepository {
 
   Future<List<PropertyModel>> userProperty() async{
     try{
+      log(_userModel.id.toString());
       final criteria= PagingCriteria(filter: 'owner="${_userModel.id.toString()}"',);
       return await _fetchData(paging: PagingCriteria(expand: "",sort:"-created", filter:criteria.filter ));
     }

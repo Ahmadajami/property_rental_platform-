@@ -1,3 +1,6 @@
+
+import 'dart:developer';
+
 import 'package:airbnb/core/constants/pocketbase_constants.dart';
 import 'package:airbnb/models/user_model/model.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -70,7 +73,6 @@ class PropertyModel {
         address: address ?? this.address,
         availabilityStatus: availabilityStatus ?? this.availabilityStatus,
         city: city ?? this.city,
-
         description: description ?? this.description,
         expand: expand ?? this.expand,
         id: id ?? this.id,
@@ -118,7 +120,11 @@ class Expand {
       Expand(
         owner: owner ?? this.owner,
       );
-  factory Expand.fromJson(Map<String, dynamic> json) => _$ExpandFromJson(json);
+
+  factory Expand.fromJson(Map<String, dynamic> json) {
+
+    return _$ExpandFromJson(json);
+  }
   Map<String, dynamic> toJson() => _$ExpandToJson(this);
 
 }

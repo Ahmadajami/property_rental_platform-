@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
+import 'package:airbnb/core/constants/pocketbase_constants.dart';
 import 'package:airbnb/core/constants/snackbar.dart';
 import 'package:airbnb/core/providers/pocketbase.dart';
+import 'package:airbnb/core/providers/secure_sharedpref/secure_sharedpref.dart';
 import 'package:airbnb/features/auth/repository/DTO.dart';
 import 'package:airbnb/features/auth/repository/auth_repository.dart';
+import 'package:airbnb/features/property/controller/property_controller.dart';
+import 'package:airbnb/features/property/repository/property_repository.dart';
 import 'package:airbnb/models/user_model/model.dart';
 
 import 'package:flutter/material.dart';
@@ -13,31 +18,22 @@ import 'package:pocketbase/pocketbase.dart';
 
 final authStreamProvider = StreamProvider((ref) {
   final onChange = ref.watch(pocketBaseProvider).authStore.onChange;
-
   return onChange;
 });
 
 final authControllerProvider =
-    AsyncNotifierProvider<AsyncAuthController, UserModel?>(() {
+    AsyncNotifierProvider.autoDispose<AsyncAuthController, UserModel?>(() {
   return AsyncAuthController();
 });
 
-class AsyncAuthController extends AsyncNotifier<UserModel?> {
+class AsyncAuthController extends AutoDisposeAsyncNotifier<UserModel?> {
   late UserModel? _user;
   @override
   FutureOr<UserModel?>? build() async {
 
-    /*
-    TODO: Refresh Token
-
-     if(pb.authStore.isValid){
-    await pb.collection(PocketBaseConstants.usersCollection).authRefresh();
-    user=UserMapper.userFromAuthStore(pb.authStore.model);
-     return user;
-  }*/
-    if (_pb.authStore.model != null) {
-      _user = UserMapper.userFromAuthStore(_pb.authStore.model);
-      return UserMapper.userFromAuthStore(_pb.authStore.model);
+    if (_authstore.model != null) {
+      _user = UserMapper.userFromAuthStore(_authstore.model);
+      return UserMapper.userFromAuthStore(_authstore.model);
     }
     return null;
   }
@@ -47,7 +43,8 @@ class AsyncAuthController extends AsyncNotifier<UserModel?> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await ref.read(authRepositoryProvider).login(email, password);
-      _user = UserMapper.userFromAuthStore(_pb.authStore.model);
+      _user = UserMapper.userFromAuthStore(_authstore.model);
+      ref.invalidate(authStoreProvider);
       return _user;
     }, (err) {
       const snackBar = SnackBar(
@@ -58,9 +55,10 @@ class AsyncAuthController extends AsyncNotifier<UserModel?> {
       showSnackBar(context, snackBar);
       return true;
     });
+
   }
   //------------
-PocketBase get _pb => ref.read(pocketBaseProvider);
+AsyncAuthStore get _authstore => ref.watch(authStoreProvider);
 
   Future<void> signup(Map<String,dynamic> formData,BuildContext context,bool mounted,XFile? avatar) async {
     state = const AsyncValue.loading();
@@ -78,6 +76,7 @@ PocketBase get _pb => ref.read(pocketBaseProvider);
         }
         return null;
       }, (err) {
+        log(err.toString());
         const snackBar = SnackBar(
           backgroundColor: Colors.red,
           duration: Duration(seconds: 5),
@@ -96,8 +95,16 @@ PocketBase get _pb => ref.read(pocketBaseProvider);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await ref.read(authRepositoryProvider).logout();
+
+      ref.invalidate(authStoreProvider);
+      ref.invalidate(asyncPropertyProvider);
+      ref.invalidate(propertyRepositoryProvider);
       return null;
-    });
+    },(error) {
+      log(" in auth controller $error");
+      return true;
+
+    },);
     _user = null;
   }
 
