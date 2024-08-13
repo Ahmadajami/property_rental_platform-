@@ -1,0 +1,5 @@
+package com.Aiu.airbnb
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()
