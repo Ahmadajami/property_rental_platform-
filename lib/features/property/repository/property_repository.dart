@@ -1,6 +1,4 @@
 
-import 'dart:developer';
-import 'dart:typed_data';
 import 'package:airbnb/core/constants/pocketbase_constants.dart';
 import 'package:airbnb/core/providers/pocketbase.dart';
 import 'package:airbnb/features/auth/controller/auth_controller.dart';
@@ -9,15 +7,13 @@ import 'package:airbnb/models/booking_model/model.dart';
 import 'package:airbnb/models/property_model/model.dart';
 import 'package:airbnb/models/user_model/model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:http/http.dart' as http;
 
 final propertyRepositoryProvider = Provider<PropertyRepository>((ref) {
-  final pb = ref.read(pocketBaseProvider);
-  final userModel = ref.read(authControllerProvider.notifier).userModel!;
-  log("propertyRepositoryProvider is created");
+  final pb = ref.watch(pocketBaseProvider);
+  final userModel = ref.watch(authControllerProvider.notifier).userModel!;
   return PropertyRepository(pb: pb, userModel: userModel);
 });
 
@@ -33,7 +29,7 @@ class PropertyRepository {
   Future<List<PropertyModel>> _fetchData(
       {  PagingCriteria paging = const PagingCriteria()}) async {
     try {
-      log(paging.toString());
+
 
       final ResultList<RecordModel> results = await _pb
           .collection(PocketBaseConstants.propertyCollection)
@@ -49,8 +45,7 @@ class PropertyRepository {
         return PropertyModel.fromRecord(property);
       }).toList();
     } catch (error) {
-      log("_fetchData is been Called  has and there is  erorr");
-      log(error.toString());
+
       rethrow;
     }
   }
@@ -118,12 +113,11 @@ class PropertyRepository {
 
   Future<List<PropertyModel>> userProperty() async{
     try{
-      log(_userModel.id.toString());
+
       final criteria= PagingCriteria(filter: 'owner="${_userModel.id.toString()}"',);
       return await _fetchData(paging: PagingCriteria(expand: "",sort:"-created", filter:criteria.filter ));
     }
     catch(error){
-      print(error);
       rethrow;
     }
   }
@@ -143,10 +137,9 @@ class PropertyRepository {
       return id;
 
     }catch(error){
-      log(error.toString());
+
       rethrow;
     }
-    return null;
   }
 
 

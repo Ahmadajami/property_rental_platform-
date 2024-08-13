@@ -22,11 +22,11 @@ final authStreamProvider = StreamProvider((ref) {
 });
 
 final authControllerProvider =
-    AsyncNotifierProvider.autoDispose<AsyncAuthController, UserModel?>(() {
+    AsyncNotifierProvider<AsyncAuthController, UserModel?>(() {
   return AsyncAuthController();
 });
 
-class AsyncAuthController extends AutoDisposeAsyncNotifier<UserModel?> {
+class AsyncAuthController extends AsyncNotifier<UserModel?> {
   late UserModel? _user;
   @override
   FutureOr<UserModel?>? build() async {
@@ -76,7 +76,7 @@ AsyncAuthStore get _authstore => ref.watch(authStoreProvider);
         }
         return null;
       }, (err) {
-        log(err.toString());
+
         const snackBar = SnackBar(
           backgroundColor: Colors.red,
           duration: Duration(seconds: 5),
@@ -95,15 +95,7 @@ AsyncAuthStore get _authstore => ref.watch(authStoreProvider);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await ref.read(authRepositoryProvider).logout();
-
-      ref.invalidate(authStoreProvider);
-      ref.invalidate(asyncPropertyProvider);
-      ref.invalidate(propertyRepositoryProvider);
       return null;
-    },(error) {
-      log(" in auth controller $error");
-      return true;
-
     },);
     _user = null;
   }

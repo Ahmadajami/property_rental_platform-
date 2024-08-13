@@ -45,7 +45,6 @@ class PropertyController extends AutoDisposeAsyncNotifier <List<PropertyModel>> 
   PropertyRepository get _repo => ref.read(propertyRepositoryProvider);
   @override
   FutureOr<List<PropertyModel>> build() async {
-    log("asyncPropertyProvider is created");
    return await _repo.getAll();
   }
   Future<void> bookProperty(PropertyModel model,DateTime start,DateTime end,VoidCallback onDone) async {
@@ -62,7 +61,7 @@ class PropertyController extends AutoDisposeAsyncNotifier <List<PropertyModel>> 
 
   }
 
-  Future<void> addProperty(PropertyModel model,List<XFile> image) async {
+  Future<void> addProperty(PropertyModel model,List<XFile> image,VoidCallback onDone) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await _repo.addProperty(model, image);
@@ -71,6 +70,12 @@ class PropertyController extends AutoDisposeAsyncNotifier <List<PropertyModel>> 
     });
     if(!state.hasError){
       ref.invalidate(latestProvider);
+      onDone();
+
+    }
+    else{
+      log("in propertey controller erorr:  state.error.toString() \n");
+      log(state.error.toString());
     }
 
 

@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:airbnb/features/auth/widget/form_field.dart';
 import 'package:airbnb/features/property/controller/property_controller.dart';
 import 'package:airbnb/models/property_model/model.dart';
@@ -7,6 +8,7 @@ import 'package:airbnb/util/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPropertyScreen extends ConsumerStatefulWidget {
@@ -19,7 +21,8 @@ class AddPropertyScreen extends ConsumerStatefulWidget {
 class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
-   late final List<XFile?>? _image;
+  List<XFile?>? _image;
+
   City? city;
   bool _internet = false;
   bool _imageLoading=false;
@@ -63,25 +66,24 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
     "Internet"
   ];
   Future<void> pickImageFromGallery() async {
+
     setState(() {
+
       _imageLoading=true;
     });
-    final List<XFile?>? image = await _picker.pickMultiImage(imageQuality: 50,limit: 3);
-    if (image != null) {
-      log("image is  not null");
-      for(final i in image)
-        {
-          log("image name");
-          log(i!.name.toString());
-        }
+     List<XFile?>? image = await _picker.pickMultiImage(imageQuality: 50,limit: 3);
+    if (image.isNotEmpty) {
       setState(() {
         _image = image;
         _imageLoading=false;
       });
     }
-    else{log("image is null");}
+    else {
+      image=null;
+    }
   }
-  void addProp() async {
+  void addProp(BuildContext context) async {
+    log(city!.name);
     PropertyModel x= PropertyModel(address: _controllers["address"]!.text,
         availabilityStatus: true,
         city: city!,
@@ -93,8 +95,8 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
         priceMonthly:   int.parse( _controllers["Monthly_Price"]!.text),
         size: int.parse( _controllers["size"]!.text),
         hasWifi: _internet, id: '', owner: '');
-    if (_image.isNotEmpty) {
-      ref.read(asyncPropertyProvider.notifier).addProperty(x, _image as List<XFile>);
+    if (  _image != null || _image!.isNotEmpty) {
+      ref.read(asyncPropertyProvider.notifier).addProperty(x, _image as List<XFile>,context.pop);
     }
     else{log("image is Empty");}
   }
@@ -347,7 +349,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
                     child: ElevatedButton(
                       onPressed:  _imageLoading ?(){}: () {
                       if (_formKey.currentState!.validate()) {
-                        addProp();
+                        addProp(context);
                       }
 
                       },

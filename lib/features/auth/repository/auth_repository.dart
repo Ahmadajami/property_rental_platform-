@@ -15,7 +15,7 @@ import 'package:pocketbase/pocketbase.dart';
 
 
 final authRepositoryProvider = Provider((ref)  {
-   final pb= ref.read(pocketBaseProvider);
+   final pb= ref.watch(pocketBaseProvider);
       return PocketBaseAuthImplementation( pb:pb);
 }
 );
@@ -50,8 +50,6 @@ class PocketBaseAuthImplementation implements AuthRepository {
   @override
   Future<void>  logout() async {
        _pb.authStore.clear();
-
-
   }
 
   @override
@@ -62,12 +60,14 @@ class PocketBaseAuthImplementation implements AuthRepository {
     try {
 
       if(avatar != null){
+
         final image= await avatar.readAsBytes();
         await _pb.collection(PocketBaseConstants.usersCollection).create(
             body: formData,
             files:[
-              http.MultipartFile.fromBytes("avatar",
-                  image,contentType:MediaType('image', 'jpeg'),
+              http.MultipartFile.fromBytes(
+                  "avatar", image,
+                  contentType:MediaType('image', 'jpeg'),
                   filename: avatar.name),
             ] );
         return true;
