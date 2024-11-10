@@ -8,7 +8,7 @@ import 'package:airbnb/features/property/screens/widgets/details.dart';
 import 'package:airbnb/features/property/screens/widgets/owner_details.dart';
 import 'package:airbnb/models/property_model/model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart' as carousel;
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +28,7 @@ class PropertyDetails extends ConsumerStatefulWidget {
 }
 
 class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
-  final _controller = carousel.CarouselController();
+  final _controller = CarouselSliderController();
   DateTime _startingDate = DateTime.now();
   DateTime _endingDate = DateTime.now();
   int _current = 0;
@@ -225,7 +225,7 @@ class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
   }
 
   Padding _buildCarousel(double screenHeight, double screenWidth,
-      List<String> images, carousel.CarouselController controller) {
+      List<String> images, CarouselSliderController controller) {
     return Padding(
       padding: EdgeInsets.only(
         top: screenHeight * 0.02, // Adjust vertical padding as needed
@@ -244,12 +244,12 @@ class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
             ),
           ],
         ),
-        child: carousel.CarouselSlider(
+        child: CarouselSlider(
           carouselController: controller,
           items: images.map((e) {
             return _decoratedNetworkImage(e, screenWidth);
           }).toList(),
-          options: carousel.CarouselOptions(
+          options: CarouselOptions(
             onPageChanged: (index, reason) =>
                 setState(() {
                   _current = index;
@@ -283,7 +283,7 @@ class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
     );
   }
 
-  Row _indicator(List<String> images, carousel.CarouselController controller,
+  Row _indicator(List<String> images, CarouselSliderController controller,
       int current) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
