@@ -1,13 +1,9 @@
 import 'dart:async';
-import 'dart:developer';
-import 'package:airbnb/core/constants/pocketbase_constants.dart';
 import 'package:airbnb/core/constants/snackbar.dart';
 import 'package:airbnb/core/providers/pocketbase.dart';
 import 'package:airbnb/core/providers/secure_sharedpref/secure_sharedpref.dart';
 import 'package:airbnb/features/auth/repository/DTO.dart';
 import 'package:airbnb/features/auth/repository/auth_repository.dart';
-import 'package:airbnb/features/property/controller/property_controller.dart';
-import 'package:airbnb/features/property/repository/property_repository.dart';
 import 'package:airbnb/models/user_model/model.dart';
 
 import 'package:flutter/material.dart';

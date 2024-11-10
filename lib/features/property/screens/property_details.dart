@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:airbnb/util/extension.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +8,7 @@ import 'package:airbnb/features/property/screens/widgets/details.dart';
 import 'package:airbnb/features/property/screens/widgets/owner_details.dart';
 import 'package:airbnb/models/property_model/model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as carousel;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,7 +28,7 @@ class PropertyDetails extends ConsumerStatefulWidget {
 }
 
 class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
-  final _controller = CarouselController();
+  final _controller = carousel.CarouselController();
   DateTime _startingDate = DateTime.now();
   DateTime _endingDate = DateTime.now();
   int _current = 0;
@@ -47,7 +46,6 @@ class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
         .of(context)
         .size
         .height;
-    //log(ref.read(getPropertyByIdProvider(widget.propertyID).future));
     return Scaffold(
       appBar: _buildAppBar(),
       body: ref.watch(getPropertyByIdProvider(widget.propertyID)).when(
@@ -227,7 +225,7 @@ class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
   }
 
   Padding _buildCarousel(double screenHeight, double screenWidth,
-      List<String> images, CarouselController controller) {
+      List<String> images, carousel.CarouselController controller) {
     return Padding(
       padding: EdgeInsets.only(
         top: screenHeight * 0.02, // Adjust vertical padding as needed
@@ -246,12 +244,12 @@ class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
             ),
           ],
         ),
-        child: CarouselSlider(
+        child: carousel.CarouselSlider(
           carouselController: controller,
           items: images.map((e) {
             return _decoratedNetworkImage(e, screenWidth);
           }).toList(),
-          options: CarouselOptions(
+          options: carousel.CarouselOptions(
             onPageChanged: (index, reason) =>
                 setState(() {
                   _current = index;
@@ -285,7 +283,7 @@ class _PropertyDetailsState extends ConsumerState<PropertyDetails> {
     );
   }
 
-  Row _indicator(List<String> images, CarouselController controller,
+  Row _indicator(List<String> images, carousel.CarouselController controller,
       int current) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
